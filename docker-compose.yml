@@ -1,0 +1,21 @@
+services:
+  sheet-pageplanner:
+    build: .
+    image: sheet-pageplanner:latest
+    container_name: sheet-pageplanner
+    ports:
+      - "8000:8000"
+    environment:
+      # SQLite 数据库文件位置（容器内路径）；依赖及建库随启动完成
+      SHEET_DB_PATH: /data/sheet.db
+    volumes:
+      - sheet-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  sheet-data:
